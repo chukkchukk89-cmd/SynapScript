@@ -55,6 +55,32 @@ app.post('/api/pair/verify', (req, res) => {
   res.json({ apiToken });
 });
 
+// --- Authentication Middleware ---
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1]; // Extract token from "Bearer TOKEN"
+
+  if (token == null) {
+    return res.status(401).json({ error: 'Authentication token required.' });
+  }
+
+  if (!authorizedTokens[token]) {
+    return res.status(403).json({ error: 'Invalid or unauthorized token.' });
+  }
+
+  // Token is valid, proceed to the next middleware/route handler
+  next();
+};
+
+// Apply authentication middleware to all subsequent routes
+app.use(authenticateToken);
+
+// --- Protected Routes (will be added here later) ---
+app.get('/api/protected', (req, res) => {
+  res.send('This is a protected route!');
+});
+
+
 app.listen(port, () => {
   console.log(`SynapScript Bridge listening at http://localhost:${port}`);
 });
