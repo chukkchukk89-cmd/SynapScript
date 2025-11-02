@@ -51,6 +51,7 @@
     *   **Cloud Anonymization:** For tasks requiring cloud AI, data is sanitized first to remove personal information. The UI *structure* is sent, not your *content*.
     *   **No Cloud Storage:** API calls will be configured to prevent logging or storage of inference data.
 *   **Permissions & Security:**
+    *   **Device Pairing & API Token Authentication:** A mandatory security layer. By default, the server rejects all requests. A user must initiate a "pairing" process from the primary device, which generates a temporary code. A new device uses this code to perform a secure handshake, receiving a long-lived, secret API token. All subsequent API requests must present this token to be authenticated. The user will have a dashboard to view and revoke access for any paired device at any time.
     *   **Transparency:** The powerful Accessibility permission will be requested with a clear, detailed explanation of why it's needed.
     *   **User in the Loop:** The system will not perform significant actions without user initiation and, for sensitive tasks, final confirmation.
     *   **Clear Feedback:** A persistent notification will always show what automation, if any, is currently running.
