@@ -499,7 +499,64 @@ To enable powerful data science, machine learning, and advanced scripting, Synap
 
 ### On-Demand (Downloaded when needed)
 
+
+
 1.  **scikit-learn:** The gold standard for classical machine learning algorithms.
+
 2.  **OpenCV-Python:** For advanced, real-time computer vision tasks.
+
 3.  **TensorFlow Lite / ONNX Runtime:** For running optimized, pre-trained AI models on-device.
+
 4.  **spaCy:** For advanced, production-grade Natural Language Processing.
+
+
+
+---
+
+
+
+## Package Management Implementation
+
+
+
+### On-Demand Installation
+
+When AI determines a package is needed:
+
+
+
+1.  Check if already cached: `/data/data/com.termux/files/home/.npm-cache/`
+
+2.  If not cached:
+
+    *   Show user: "Download [package] ([size])? [Benefits]"
+
+    *   If approved: Download pre-compiled bundle from CDN.
+
+    *   Extract to cache directory.
+
+    *   Link to `node_modules` (for Node.js) or Python's `site-packages`.
+
+3.  Execute automation with package.
+
+
+
+### Updates
+
+*   Bundled packages: Updated with app releases.
+
+*   Cached packages: Check monthly, prompt user for updates.
+
+*   Security patches: Auto-update, notify user.
+
+
+
+### Cleanup
+
+*   Settings → Storage Manager.
+
+*   Show installed packages with sizes.
+
+*   User can remove unused packages.
+
+*   Auto-suggest removal if storage < 500MB.
