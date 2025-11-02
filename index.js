@@ -1,5 +1,6 @@
 const express = require('express');
-const { nanoid } = require('nanoid'); // Import nanoid
+const { nanoid } = require('nanoid');
+const { exec } = require('child_process'); // Import child_process
 const app = express();
 const port = 3000;
 
@@ -75,9 +76,26 @@ const authenticateToken = (req, res, next) => {
 // Apply authentication middleware to all subsequent routes
 app.use(authenticateToken);
 
-// --- Protected Routes (will be added here later) ---
+// --- Protected Routes ---
 app.get('/api/protected', (req, res) => {
   res.send('This is a protected route!');
+});
+
+// New endpoint to execute Termux commands
+app.post('/api/execute/command', (req, res) => {
+  const { command } = req.body;
+
+  if (!command) {
+    return res.status(400).json({ error: 'Command is required.' });
+  }
+
+  exec(command, (error, stdout, stderr) => {
+    if (error) {
+      console.error(`exec error: ${error}`);
+      return res.status(500).json({ error: stderr || error.message });
+    }
+    res.json({ stdout, stderr });
+  });
 });
 
 
