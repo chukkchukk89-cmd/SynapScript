@@ -5,6 +5,11 @@ const port = 3000;
 
 // In-memory storage for pairing codes (for now)
 const pairingCodes = {};
+// In-memory storage for authorized API tokens
+const authorizedTokens = {};
+
+// Middleware to parse JSON bodies
+app.use(express.json());
 
 app.get('/', (req, res) => {
   res.send('SynapScript Bridge is running!');
@@ -19,6 +24,35 @@ app.post('/api/pair/initiate', (req, res) => {
   console.log(`Pairing initiated. Code: ${code}, expires: ${new Date(expiry).toLocaleTimeString()}`);
 
   res.json({ code, expiry });
+});
+
+// New endpoint to verify pairing code and issue API token
+app.post('/api/pair/verify', (req, res) => {
+  const { code } = req.body;
+
+  if (!code) {
+    return res.status(400).json({ error: 'Pairing code is required.' });
+  }
+
+  const pairingEntry = pairingCodes[code];
+
+  if (!pairingEntry) {
+    return res.status(404).json({ error: 'Invalid or expired pairing code.' });
+  }
+
+  if (Date.now() > pairingEntry.expiry) {
+    delete pairingCodes[code]; // Clean up expired code
+    return res.status(404).json({ error: 'Pairing code has expired.' });
+  }
+
+  // Code is valid and not expired, generate a long-lived API token
+  const apiToken = nanoid(32); // Generate a longer, more secure token
+  authorizedTokens[apiToken] = { createdAt: Date.now() }; // Store token
+
+  delete pairingCodes[code]; // Remove used pairing code
+
+  console.log(`Pairing successful. Issued API Token: ${apiToken}`);
+  res.json({ apiToken });
 });
 
 app.listen(port, () => {
