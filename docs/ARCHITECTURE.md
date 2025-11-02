@@ -39,7 +39,8 @@
     *   Acts as the "robot user" for all UI interactions (tapping, swiping, reading text, etc.).
     *   This is the key to our resilient, AI-driven UI automation.
 *   **Secondary Engine (CLI): Termux CLI**
-    *   Handles all non-UI "backend" tasks like running scripts, managing files, and executing command-line tools.
+    *   Handles all non-UI "backend" tasks.
+    *   Supports executing scripts in multiple languages, including **Node.js** and **Python**.
 
 ---
 
@@ -53,9 +54,10 @@
     *   **Transparency:** The powerful Accessibility permission will be requested with a clear, detailed explanation of why it's needed.
     *   **User in the Loop:** The system will not perform significant actions without user initiation and, for sensitive tasks, final confirmation.
     *   **Clear Feedback:** A persistent notification will always show what automation, if any, is currently running.
-*   **Resource Efficiency:**
+*   **Resource Efficiency & Stability:**
     *   **Event-Driven:** The app remains dormant and consumes near-zero resources until triggered by a user command or a scheduled event.
     *   **On-Demand:** Heavy processes are only active when executing a task.
+    *   **Resource Manager:** A core module responsible for system stability. Before execution, it analyzes the automation's estimated resource cost and compares it to available system resources (RAM/CPU). If a task is deemed too expensive, it will warn the user and provide suggestions (e.g., run later, process items sequentially) to prevent the app or system from crashing.
 
 ---
 
