@@ -1,4 +1,3 @@
-
 # SynapScript Package Reference
 
 This document outlines the essential and on-demand Node.js packages selected for the SynapScript project.
@@ -481,3 +480,26 @@ User: "Auto-apply to jobs"
 ```
 
 This gives you **90% automation coverage** with just 1.4MB of packages, keeping your app lean while being incredibly powerful.
+
+---
+
+## **Essential Python Packages**
+
+To enable powerful data science, machine learning, and advanced scripting, SynapScript also supports a polyglot environment with Python.
+
+### Bundled (Pre-installed)
+
+1.  **requests:** The standard for making HTTP requests (Python's `axios`).
+2.  **BeautifulSoup4:** The best library for parsing HTML and XML (Python's `cheerio`).
+3.  **numpy:** The fundamental package for scientific computing and a dependency for many data science libraries.
+4.  **pandas:** The ultimate tool for data manipulation and analysis (reading CSVs, data cleanup, etc.).
+5.  **Pillow (PIL Fork):** A powerful-yet-friendly library for most image manipulation tasks (resizing, cropping, converting).
+6.  **python-dotenv:** For managing secrets and configuration in `.env` files.
+7.  **schedule:** A very intuitive library for scheduling jobs (e.g., `schedule.every().day.at("10:30").do(job)`).
+
+### On-Demand (Downloaded when needed)
+
+1.  **scikit-learn:** The gold standard for classical machine learning algorithms.
+2.  **OpenCV-Python:** For advanced, real-time computer vision tasks.
+3.  **TensorFlow Lite / ONNX Runtime:** For running optimized, pre-trained AI models on-device.
+4.  **spaCy:** For advanced, production-grade Natural Language Processing.
