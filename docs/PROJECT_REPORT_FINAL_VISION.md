@@ -154,6 +154,7 @@ All project documentation is maintained in the `/docs` directory:
 ### **6.2 Phased Rollout Plan**
 
 *   **Phase 0: Proof of Concept (Week 1-2):** Build Termux server with 1 endpoint, Gemini API integration, generate Termux command from text, execute command manually.
+    *   **Current Status:** COMPLETED - The `GEMINI_API_KEY` issue has been resolved. The root cause was identified as running the application from a directory other than the project's root, which prevented the `dotenv` package from loading the `.env` file.
 *   **Phase 1: MVP Backend (Week 3-4):** SQLite database, CRUD for automations, `node-cron` scheduling, execution logging.
 *   **Phase 2: Basic Frontend (Week 5-6):** HTML input form, display automations list, show execution logs, manual trigger buttons.
 *   **Phase 3: Visual Polish (Week 7-8):** Visual block representation, emoji icons, parameter editors, dark mode.
@@ -163,6 +164,16 @@ All project documentation is maintained in the `/docs` directory:
 
 *   **Do This:** Start with Proof of Concept, build only what's testable on tablet, use emoji, keep frontend simple (vanilla JS), manual testing only, ship minimal but working features.
 *   **Don't Do This:** Don't build template marketplace, Python runtime, advanced Accessibility Service, drag-and-drop UI, multi-device sync, or support every Termux API command.
+
+---
+
+## **Part 7: Troubleshooting**
+
+### **7.1 `GEMINI_API_KEY` Not Found Error**
+
+*   **Symptom:** The application fails to start with an error message similar to "Gemini API key not found. Set GEMINI_API_KEY env variable."
+*   **Cause:** This error occurs when the application cannot find the `.env` file containing the `GEMINI_API_KEY`. The most common reason for this is running the application from a directory other than the project's root directory.
+*   **Resolution:** Always ensure that you are in the project's root directory (`/storage/emulated/0/SynapScript`) before running the application. The `dotenv` package, which is used to load environment variables, expects the `.env` file to be in the current working directory.
 
 ---
 
