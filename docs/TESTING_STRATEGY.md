@@ -23,10 +23,10 @@ This document outlines the testing strategy for SynapScript, focusing on the cur
 
 *   **Objective:** Verify that different components of the system work together as expected.
 *   **Methodology:**
-    *   **API Endpoint Testing:** Using `curl` commands to interact with the Express.js server endpoints (e.g., `/api/pair/initiate`, `/api/pair/verify`, `/api/speak`).
+    *   **API Endpoint Testing:** Using `curl` commands to interact with the Express.js server endpoints (e.g., `/api/pair/initiate`, `/api/pair/verify`, `/api/speak`, and automation CRUD endpoints).
+    *   **Database Interaction Testing:** Manually verifying CRUD operations for automations and API tokens directly in the SQLite database (e.g., using `sqlite3` CLI tool).
     *   **Token-Based Authentication:** Ensuring that API tokens are correctly generated, validated, and used for protected routes.
     *   **Module Integration:** Confirming that server routes correctly call and receive responses from internal modules (e.g., `speaker` module).
-
 ### 2.3 System Testing (Manual)
 
 *   **Objective:** Verify the end-to-end functionality of a user-facing feature.
@@ -45,7 +45,7 @@ This document outlines the testing strategy for SynapScript, focusing on the cur
 ## 4. Specific Testing Notes
 
 *   **Termux API Commands:** Verification of `termux-api` package installation (`pkg install termux-api`) and manual confirmation of Termux:API app permissions and Android TTS engine configuration are critical initial steps for any feature relying on Termux API.
-*   **API Token Management:** Due to in-memory storage, API tokens are regenerated after every server restart for testing protected routes.
+*   **API Token Management:** API tokens are now persistently stored in the SQLite database. This means tokens will persist across server restarts, simplifying testing of protected routes.
 
 ## 5. Future Considerations (Post V1.0)
 
