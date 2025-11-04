@@ -19,6 +19,7 @@ async function initializeDatabase() {
         trigger TEXT,
         actions TEXT,
         generated_code TEXT,
+        schedule TEXT, -- New column for cron schedule
         created_at INTEGER,
         updated_at INTEGER
       );
@@ -62,17 +63,19 @@ async function createAutomation(automation) {
     trigger: JSON.stringify(automation.trigger),
     actions: JSON.stringify(automation.actions),
     generated_code: JSON.stringify(automation.generated_code),
+    schedule: automation.schedule || null,
     created_at: now,
     updated_at: now,
   };
   await db.run(
-    `INSERT INTO automations (id, name, trigger, actions, generated_code, created_at, updated_at)
-     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    `INSERT INTO automations (id, name, trigger, actions, generated_code, schedule, created_at, updated_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     newAutomation.id,
     newAutomation.name,
     newAutomation.trigger,
     newAutomation.actions,
     newAutomation.generated_code,
+    newAutomation.schedule,
     newAutomation.created_at,
     newAutomation.updated_at
   );
@@ -105,9 +108,13 @@ async function updateAutomation(id, updates) {
   const values = [];
 
   for (const key in updates) {
-    if (['name', 'trigger', 'actions', 'generated_code'].includes(key)) {
+    if (['name', 'trigger', 'actions', 'generated_code', 'schedule'].includes(key)) {
       fields.push(`${key} = ?`);
-      values.push(JSON.stringify(updates[key]));
+      if (key === 'schedule') {
+        values.push(updates[key]);
+      } else {
+        values.push(JSON.stringify(updates[key]));
+      }
     }
   }
   fields.push('updated_at = ?');

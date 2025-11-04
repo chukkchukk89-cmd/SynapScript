@@ -25,6 +25,7 @@ const GeminiClient = require('./server/ai/gemini-client'); // Import GeminiClien
 const ResponseParser = require('./server/ai/response-parser'); // Import ResponseParser
 const express = require('express');
 const { nanoid } = require('nanoid');
+const cron = require('node-cron');
 const { initializeDatabase, createAutomation, getAutomationById, getAllAutomations, updateAutomation, deleteAutomation, createApiToken, getApiToken, deleteApiToken } = require('./server/modules/database');
 
 const app = express();
@@ -35,6 +36,64 @@ const gemini = new GeminiClient();
 
 // In-memory storage for pairing codes (for now)
 const pairingCodes = {};
+
+// Map to store scheduled cron jobs
+const scheduledJobs = new Map();
+
+/**
+ * Schedules an automation using node-cron.
+ * @param {object} automation - The automation object containing id and schedule.
+ */
+async function scheduleAutomation(automation) {
+  if (automation.schedule && cron.validate(automation.schedule)) {
+    // Ensure any existing job for this automation is unscheduled first
+    unscheduleAutomation(automation.id);
+
+    const job = cron.schedule(automation.schedule, async () => {
+      console.log(`Executing scheduled automation: ${automation.name} (${automation.id})`);
+      // Here, you would call the automation execution logic
+      // For now, we'll just log it. The actual execution will be handled by the /api/automations/execute/:id endpoint.
+      // We need to make an internal call to that endpoint or refactor the execution logic.
+      try {
+        // This is a simplified call. In a real scenario, you might use an internal function
+        // that mimics the /api/automations/execute/:id endpoint's logic.
+        const response = await fetch(`http://localhost:${port}/api/automations/execute/${automation.id}`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer YOUR_INTERNAL_API_TOKEN`, // Use an internal token for server-to-server calls
+            'Content-Type': 'application/json',
+          },
+        });
+        const result = await response.json();
+        if (!result.success) {
+          console.error(`Scheduled automation ${automation.id} failed:`, result.error);
+        }
+      } catch (error) {
+        console.error(`Error executing scheduled automation ${automation.id}:`, error);
+      }
+    }, {
+      scheduled: true,
+      timezone: "America/New_York" // Or dynamically set based on user's timezone
+    });
+    scheduledJobs.set(automation.id, job);
+    console.log(`Automation ${automation.name} (${automation.id}) scheduled with cron: ${automation.schedule}`);
+  } else if (automation.schedule) {
+    console.warn(`Invalid cron schedule for automation ${automation.name} (${automation.id}): ${automation.schedule}`);
+  }
+}
+
+/**
+ * Unschedules an automation.
+ * @param {string} automationId - The ID of the automation to unschedule.
+ */
+function unscheduleAutomation(automationId) {
+  const job = scheduledJobs.get(automationId);
+  if (job) {
+    job.stop();
+    scheduledJobs.delete(automationId);
+    console.log(`Automation ${automationId} unscheduled.`);
+  }
+}
 
 // Middleware to parse JSON bodies
 app.use(express.json());
@@ -90,6 +149,11 @@ const authenticateToken = async (req, res, next) => {
 
   if (token == null) {
     return res.status(401).json({ error: 'Authentication token required.' });
+  }
+
+  // Allow internal API token to bypass authentication for server-to-server calls
+  if (token === INTERNAL_API_TOKEN) {
+    return next();
   }
 
   const apiToken = await getApiToken(token);
@@ -252,12 +316,13 @@ const speakerRoute = require('./server/routes/speaker');
 app.use('/api', speakerRoute);
 app.post('/api/automations', authenticateToken, async (req, res) => {
   try {
-    const { name, trigger, actions, generated_code } = req.body;
+    const { name, trigger, actions, generated_code, schedule } = req.body;
     if (!name || !trigger || !actions || !generated_code) {
       return res.status(400).json({ error: 'Missing required automation fields.' });
     }
     const id = nanoid(10);
-    const newAutomation = await createAutomation({ id, name, trigger, actions, generated_code });
+    const newAutomation = await createAutomation({ id, name, trigger, actions, generated_code, schedule });
+    scheduleAutomation(newAutomation); // Schedule the new automation
     res.status(201).json({ success: true, automation: newAutomation });
   } catch (error) {
     console.error('Error creating automation:', error);
@@ -294,8 +359,18 @@ app.put('/api/automations/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
     const updates = req.body;
+    const existingAutomation = await getAutomationById(id);
+    if (!existingAutomation) {
+      return res.status(404).json({ error: 'Automation not found.' });
+    }
+
     const updatedAutomation = await updateAutomation(id, updates);
     if (updatedAutomation) {
+      // If schedule was updated, unschedule the old one and schedule the new one
+      if (updates.schedule !== undefined) {
+        unscheduleAutomation(id);
+        scheduleAutomation(updatedAutomation);
+      }
       res.json({ success: true, automation: updatedAutomation });
     } else {
       res.status(404).json({ error: 'Automation not found.' });
@@ -309,6 +384,7 @@ app.put('/api/automations/:id', authenticateToken, async (req, res) => {
 app.delete('/api/automations/:id', authenticateToken, async (req, res) => {
   try {
     const { id } = req.params;
+    unscheduleAutomation(id); // Unschedule the automation before deleting
     const deleted = await deleteAutomation(id);
     if (deleted) {
       res.json({ success: true, message: 'Automation deleted successfully.' });
@@ -323,9 +399,19 @@ app.delete('/api/automations/:id', authenticateToken, async (req, res) => {
 
 async function startServer() {
   await initializeDatabase(); // Initialize the database before starting the server
+
+  // Schedule existing automations
+  const automations = await getAllAutomations();
+  for (const automation of automations) {
+    scheduleAutomation(automation);
+  }
+
   app.listen(port, () => {
     console.log(`SynapScript Bridge listening at http://localhost:${port}`);
   });
 }
 
 startServer();
+
+// Internal API token for server-to-server communication (e.g., scheduled tasks)
+const INTERNAL_API_TOKEN = process.env.INTERNAL_API_TOKEN || 'super-secret-internal-token'; // Use environment variable in production
