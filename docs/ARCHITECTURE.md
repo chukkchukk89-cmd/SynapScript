@@ -34,8 +34,8 @@
 
 ### 2.2 The Bridge: Local Backend Server
 
-*   **Technology:** A lightweight server in Termux (e.g., Node.js/Express or Python/Flask).
-*   **Purpose:** To securely connect the sandboxed web frontend to the powerful execution layers. It exposes a local API that the frontend calls to initiate tasks.
+*   **Technology:** A lightweight server in Termux using **Node.js/Express**.
+*   **Purpose:** To securely connect the sandboxed web frontend to the powerful execution layers. It exposes a local API that the frontend calls to initiate tasks. It now uses **SQLite** for persistent storage of automations and API tokens.
 
 ### Layer 2: The Translator (AI Core)
 
@@ -56,11 +56,10 @@
 
 ### Data Layer: Persistence & State (v1.0)
 
-*   **Primary Storage:** SQLite database (`synap.db`).
+*   **Primary Storage:** SQLite database (`synapscript.db`).
 *   **Schema (v1.0):**
-    *   `automations` - User-created automations.
-    *   `execution_logs` - History of runs.
-    *   `settings` - User preferences.
+    *   `automations` - User-created automations. Stores `id`, `name`, `trigger` (JSON string), `actions` (JSON string), `generated_code` (JSON string), `created_at`, `updated_at`.
+    *   `api_tokens` - Stores API tokens for device authentication (`token`, `description`, `created_at`).
 *   **State Management:**
     *   In-memory state for running automations.
     *   Persistent state for scheduled/recurring tasks.
@@ -75,7 +74,7 @@
     *   **Cloud Anonymization:** For tasks requiring cloud AI, data is sanitized first to remove personal information. The UI *structure* is sent, not your *content*.
     *   **No Cloud Storage:** API calls will be configured to prevent logging or storage of inference data.
 *   **Permissions & Security:**
-    *   **Device Pairing & API Token Authentication (v1.0):** A mandatory security layer. By default, the server rejects all requests. A user must initiate a "pairing" process from the primary device, which generates a temporary code. A new device uses this code to perform a secure handshake, receiving a long-lived, secret API token. All subsequent API requests must present this token to be authenticated. The user will have a dashboard to view and revoke access for any paired device at any time.
+    *   **Device Pairing & API Token Authentication (v1.0):** A mandatory security layer. By default, the server rejects all requests. A user must initiate a "pairing" process from the primary device, which generates a temporary code. A new device uses this code to perform a secure handshake, receiving a long-lived, secret API token. This token is now stored persistently in the **SQLite database**. All subsequent API requests must present this token to be authenticated. The user will have a dashboard to view and revoke access for any paired device at any time.
     *   (Detailed token storage, network security, execution sandboxing, and audit trail deferred to v2.0+).
     *   **Transparency:** The powerful Accessibility permission will be requested with a clear, detailed explanation of why it's needed.
     *   **User in the Loop:** The system will not perform significant actions without user initiation and, for sensitive tasks, final confirmation.
