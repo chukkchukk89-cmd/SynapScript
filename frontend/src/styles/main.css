@@ -1,0 +1,74 @@
+.automation-card {
+    background-color: #3a3f47;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 600px;
+}
+
+.automation-card-emoji {
+    font-size: 48px;
+    margin-right: 16px;
+}
+
+.automation-card-info h3 {
+    margin: 0;
+    font-size: 1.2em;
+}
+
+.automation-card-info p {
+    margin: 4px 0 0;
+    font-size: 0.9em;
+    color: #b0b3b8;
+}
+
+.status-timeline ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 16px 0;
+}
+
+.status-timeline li {
+    padding-left: 20px;
+    border-left: 2px solid #ccc;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.status-timeline li::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: #ccc;
+    border-radius: 50%;
+    position: absolute;
+    left: -6px;
+    top: 5px;
+}
+
+.status-timeline li.completed {
+    border-left-color: #4caf50;
+}
+
+.status-timeline li.completed::before {
+    background-color: #4caf50;
+}
+
+.status-timeline li.in-progress {
+    border-left-color: #fbc02d;
+}
+
+.status-timeline li.in-progress::before {
+    background-color: #fbc02d;
+}
+
+.status-timeline li.failed {
+    border-left-color: #f44336;
+}
+
+.status-timeline li.failed::before {
+    background-color: #f44336;
+}
