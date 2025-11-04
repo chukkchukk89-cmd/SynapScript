@@ -26,7 +26,7 @@ const ResponseParser = require('./server/ai/response-parser'); // Import Respons
 const express = require('express');
 const { nanoid } = require('nanoid');
 const cron = require('node-cron');
-const { initializeDatabase, createAutomation, getAutomationById, getAllAutomations, updateAutomation, deleteAutomation, createApiToken, getApiToken, deleteApiToken } = require('./server/modules/database');
+const { initializeDatabase, createAutomation, getAutomationById, getAllAutomations, updateAutomation, deleteAutomation, createApiToken, getApiToken, deleteApiToken, logExecution } = require('./server/modules/database');
 
 const app = express();
 const port = 3000;
@@ -264,6 +264,8 @@ app.post('/api/automations/execute/:id', authenticateToken, async (req, res) => 
     let stdout = '';
     let stderr = '';
     let executionError = null;
+    let status = 'success';
+    let errorMessage = null;
 
     if (generated_code.language === 'javascript') {
       const tempFileName = `/data/data/com.termux/files/home/.gemini/tmp/${id}.js`;
@@ -275,6 +277,8 @@ app.post('/api/automations/execute/:id', authenticateToken, async (req, res) => 
       } catch (jsExecError) {
         executionError = jsExecError;
         stderr = jsExecError.stderr || jsExecError.message;
+        status = 'failed';
+        errorMessage = jsExecError.message;
       } finally {
         // Clean up the temporary file
         try {
@@ -291,16 +295,25 @@ app.post('/api/automations/execute/:id', authenticateToken, async (req, res) => 
       } catch (bashExecError) {
         executionError = bashExecError;
         stderr = bashExecError.stderr || bashExecError.message;
+        status = 'failed';
+        errorMessage = bashExecError.message;
       }
     } else {
-      return res.status(400).json({ success: false, automationId: id, error: `Unsupported language: ${generated_code.language}` });
+      status = 'failed';
+      errorMessage = `Unsupported language: ${generated_code.language}`;
+      await logExecution(id, status, '', errorMessage);
+      return res.status(400).json({ success: false, automationId: id, error: errorMessage });
     }
 
     if (executionError || stderr) {
+      status = 'failed';
+      errorMessage = executionError ? executionError.message : 'Command executed with errors.';
       console.error(`Execution stderr for automation ${id}: ${stderr}`);
-      return res.status(400).json({ success: false, automationId: id, stdout, stderr, error: executionError ? executionError.message : 'Command executed with errors.' });
+      await logExecution(id, status, stdout + stderr, errorMessage);
+      return res.status(400).json({ success: false, automationId: id, stdout, stderr, error: errorMessage });
     }
 
+    await logExecution(id, status, stdout + stderr);
     res.json({ success: true, automationId: id, stdout, stderr });
 
   } catch (error) {

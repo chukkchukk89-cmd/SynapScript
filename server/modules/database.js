@@ -24,6 +24,16 @@ async function initializeDatabase() {
         updated_at INTEGER
       );
 
+      CREATE TABLE IF NOT EXISTS execution_logs (
+        id TEXT PRIMARY KEY,
+        automation_id TEXT,
+        timestamp INTEGER,
+        status TEXT,
+        output TEXT,
+        error_message TEXT,
+        FOREIGN KEY (automation_id) REFERENCES automations(id) ON DELETE CASCADE
+      );
+
       CREATE TABLE IF NOT EXISTS api_tokens (
         token TEXT PRIMARY KEY,
         description TEXT,
@@ -53,6 +63,22 @@ async function initializeDatabase() {
     console.error('Error initializing SQLite database:', error.message);
     process.exit(1);
   }
+}
+
+async function logExecution(automationId, status, output, errorMessage = null) {
+  const id = uuidv4();
+  const timestamp = Date.now();
+  await db.run(
+    `INSERT INTO execution_logs (id, automation_id, timestamp, status, output, error_message)
+     VALUES (?, ?, ?, ?, ?, ?)`,
+    id,
+    automationId,
+    timestamp,
+    status,
+    output,
+    errorMessage
+  );
+  return { id, automation_id: automationId, timestamp, status, output, error_message: errorMessage };
 }
 
 async function createAutomation(automation) {
