@@ -30,7 +30,7 @@ SynapScript V1.0 aims to be a functional, AI-powered automation assistant for An
 ### 2.2 The Bridge: Local Backend Server
 
 *   **Description:** Connects frontend to execution layers.
-*   **Technology:** Node.js with Express.js in Termux.
+*   **Technology:** Node.js with Express.js in Termux, utilizing SQLite for persistent data storage.
 *   **Purpose:** Exposes a local, secure REST API for orchestration.
 
 ### 2.3 Layer 2: The Translator (AI Core)
@@ -52,7 +52,7 @@ SynapScript V1.0 aims to be a functional, AI-powered automation assistant for An
 
 ### 3.1 Security Model: Device Pairing & API Token Authentication
 
-*   **Mechanism:** Mandatory pairing initiated from phone, temporary code, secure handshake, long-lived API token for authenticated requests. User control for revocation.
+*   **Mechanism:** Mandatory pairing initiated from phone, temporary code, secure handshake, long-lived API token for authenticated requests. API tokens are stored persistently in the SQLite database. User control for revocation.
 *   **(Complex token storage, network security, sandboxing deferred to v2.0+).**
 
 ### 3.2 Resource Manager
@@ -72,7 +72,7 @@ SynapScript V1.0 aims to be a functional, AI-powered automation assistant for An
 
 ### 4.2 Selected Packages (V1.0 Bundled Only)
 
-*   **Node.js:** `axios`, `cheerio`, `express`, `fs-extra`, `node-cron`, `dayjs`, `chalk`, `dotenv`, `commander`, `ws`.
+*   **Node.js:** `axios`, `cheerio`, `express`, `node-cron`, `dayjs`, `chalk`, `dotenv`, `commander`, `ws`, `sqlite`, `uuid`.
 *   **(Python runtime and on-demand package downloads deferred to v2.0+).**
 
 ---
@@ -100,7 +100,7 @@ SynapScript V1.0 aims to be a functional, AI-powered automation assistant for An
 ### Phased Rollout Plan
 
 *   **Phase 0: Proof of Concept (Week 1-2):** Build Termux server with 1 endpoint, Gemini API integration, generate Termux command from text, execute command manually.
-*   **Phase 1: MVP Backend (Week 3-4):** SQLite database, CRUD for automations, `node-cron` scheduling, execution logging.
+*   **Phase 1: MVP Backend (Week 3-4):** SQLite database, CRUD for automations, `node-cron` scheduling, execution logging. (Implemented: SQLite database, CRUD for automations).
 *   **Phase 2: Basic Frontend (Week 5-6):** HTML input form, display automations list, show execution logs, manual trigger buttons.
 *   **Phase 3: Visual Polish (Week 7-8):** Visual block representation, emoji icons, parameter editors, dark mode.
 *   **Phase 4: Beta Testing (Week 9-10):** Bug fixing, AI prompt improvement, add 3-5 hardcoded templates.
