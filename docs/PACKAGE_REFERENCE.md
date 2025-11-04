@@ -110,40 +110,43 @@ Example Uses:
 
 ***
 
-### **4. fs-extra**
-**Size:** ~100KB | **Downloads:** 20M+/week
+### **4. sqlite**
+**Size:** ~500KB | **Downloads:** 10M+/week (estimate)
 
 **Applications in SynapScript:**
 ```
-✓ File Organization
-  • Auto-sort downloads by file type
-  • Move photos from DCIM to organized folders
-  • Clean up old files automatically
-  • Rename files in bulk with patterns
+✓ Persistent Data Storage
+  • Store user automations
+  • Manage API tokens
+  • Log execution history
+  • Store user preferences
 
-✓ Backup & Sync
-  • Copy important files to backup folder
-  • Mirror folders for redundancy
-  • Create automated archives
-  • Sync files between storage locations
-  
-✓ File Management
-  • Check if file exists before action
-  • Read/write JSON config files
-  • Create folder structures dynamically
-  • Delete empty directories
+✓ Local Database
+  • Fast and efficient on-device storage
+  • No external server required
+  • Standard SQL interface
 
-✓ Data Processing
-  • Read CSV/JSON files for automation input
-  • Write automation logs to files
-  • Process downloaded files
-  • Generate reports
-  
 Example Uses:
-• "Organize downloads into folders by type"
-• "Backup photos to external SD card weekly"
-• "Delete screenshots older than 30 days"
-• "Copy work files to secure folder daily"
+• "Save my automations permanently"
+• "Store API keys securely"
+• "Keep a record of automation runs"
+```
+
+***
+
+### **5. uuid**
+**Size:** ~10KB | **Downloads:** 100M+/week
+
+**Applications in SynapScript:**
+```
+✓ Unique ID Generation
+  • Generate unique IDs for automations
+  • Create unique identifiers for API tokens
+  • Ensure data integrity
+
+Example Uses:
+• "Assign a unique ID to each new automation"
+• "Generate secure API tokens"
 ```
 
 ***
@@ -383,7 +386,8 @@ Example Uses:
 | **axios** | ✅ Yes | 500KB | API calls, webhooks |
 | **cheerio** | ✅ Yes | 300KB | Web scraping |
 | **express** | ✅ Yes | 200KB | Local API server |
-| **fs-extra** | ✅ Yes | 100KB | File operations |
+| **sqlite** | ✅ Yes | 500KB | Local database |
+| **uuid** | ✅ Yes | 10KB | Unique ID generation |
 | **node-cron** | ✅ Yes | 50KB | Scheduling |
 | **dayjs** | ✅ Yes | 7KB | Date/time |
 | **chalk** | ✅ Yes | 50KB | Terminal colors |
