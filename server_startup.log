@@ -1,0 +1,3 @@
+[dotenv@17.2.3] injecting env (1) from .env -- tip: ⚙️  override existing env vars with { override: true }
+Loaded 0 automations from /storage/emulated/0/SynapScript/automations.json
+SynapScript Bridge listening at http://localhost:3000

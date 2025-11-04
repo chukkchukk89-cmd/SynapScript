@@ -1,16 +1,15 @@
 # SynapScript Package Reference
 
-This document outlines the essential and on-demand Node.js packages selected for the SynapScript project.
+This document outlines the essential Node.js packages bundled for SynapScript Version 1.0.
 
-## **Core Philosophy**
+## **Core Philosophy (V1.0)**
 
-- **Lean Core:** Bundle a minimal set of essential, lightweight packages to cover ~90% of common automation tasks without bloating the application.
-- **On-Demand Power:** For larger, more specialized packages (like browser automation or image processing), prompt the user for a one-time download. This keeps the initial install small and respects user resources.
-- **Transparency:** Clearly justify why a package is needed when prompting for a download.
+- **Lean Core:** Bundle a minimal set of essential, lightweight packages to cover ~95% of common automation tasks without bloating the application.
+- **Zero On-Demand Complexity:** All necessary packages for v1.0 are pre-bundled. No dynamic downloads are required.
 
 ---
 
-## **Top 10 Bundled Packages**
+## **V1.0 Bundled Packages (12 Essential Node.js Packages)**
 
 These packages will be pre-included in the SynapScript environment.
 
@@ -339,3 +338,78 @@ Example Uses:
 • "Stream sensor data to server"
 ```
 
+***
+
+### **11. csv-parser (NEW)**
+**Size:** ~100KB | **Downloads:** 10M+/week (estimate)
+
+**Applications in SynapScript:**
+```
+✓ Data Processing
+  • Parse CSV files (bank statements, contacts)
+  • Convert data formats
+  • Process exported data
+  • Generate reports
+
+Example Uses:
+• "Parse bank CSV and categorize expenses"
+• "Convert contacts CSV to JSON"
+• "Process spreadsheet data"
+```
+
+***
+
+### **12. qrcode (NEW)**
+**Size:** ~50KB | **Downloads:** 5M+/week (estimate)
+
+**Applications in SynapScript:**
+```
+✓ QR Code Generation
+  • Generate QR codes for sharing text/links
+  • Create QR codes for Wi-Fi credentials
+  • Generate QR codes for payment requests
+
+Example Uses:
+• "Generate QR code for my Wi-Fi password"
+• "Create QR code for a URL"
+```
+
+---
+
+## **Package Summary (V1.0)**
+
+| Package | Bundled? | Size | Primary Use |
+|---|---|---|---|
+| **axios** | ✅ Yes | 500KB | API calls, webhooks |
+| **cheerio** | ✅ Yes | 300KB | Web scraping |
+| **express** | ✅ Yes | 200KB | Local API server |
+| **fs-extra** | ✅ Yes | 100KB | File operations |
+| **node-cron** | ✅ Yes | 50KB | Scheduling |
+| **dayjs** | ✅ Yes | 7KB | Date/time |
+| **chalk** | ✅ Yes | 50KB | Terminal colors |
+| **dotenv** | ✅ Yes | 20KB | Config/secrets |
+| **commander** | ✅ Yes | 100KB | CLI parsing |
+| **ws** | ✅ Yes | 100KB | WebSockets |
+| **csv-parser** | ✅ Yes | 100KB | Data parsing |
+| **qrcode** | ✅ Yes | 50KB | QR generation |
+
+**Total Bundled Size:** ~1.6MB for all 12 essential packages
+**Base APK Impact:** Minimal - Node.js itself is ~50MB, packages are negligible
+
+---
+
+## **Future Considerations (Post V1.0)**
+
+### **Coming Soon (Deferred to V2.0+)**
+
+*   **Browser automation:** `puppeteer`
+*   **Advanced image processing:** `sharp`
+*   **Email sending:** `nodemailer`
+*   **Cloud database:** `mongoose`
+
+### **Manual Additions (via Termux CLI)**
+
+Users can manually install these tools via Termux for advanced use cases:
+*   `imagemagick` (for advanced photo manipulation)
+*   `ffmpeg` (for video processing)
+*   `git` (for version control)
